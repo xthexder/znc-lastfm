@@ -29,7 +29,11 @@ def now_playing(username, api_key):
         feed = lxml.etree.parse(urllib.request.urlopen(feed_url))
         track = feed.xpath('/lfm/recenttracks/track')[0]
         if track.attrib.get('nowplaying'):
-            return feed.xpath('/lfm/recenttracks/track/artist')[0].text + ' - ' + feed.xpath('/lfm/recenttracks/track/name')[0].text
+            try:
+                album = " [" + feed.xpath('/lfm/recenttracks/track/album')[0].text + "]"
+            except (TypeError, IndexError):
+                album = ""
+            return feed.xpath('/lfm/recenttracks/track/artist')[0].text + ' - ' + feed.xpath('/lfm/recenttracks/track/name')[0].text + album
         else:
             raise Exception('Nothing is playing')
     except (TypeError, IndexError):
